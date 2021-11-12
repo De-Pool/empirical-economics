@@ -1,5 +1,7 @@
 install.packages("arsenal")
+install.packages("AER")
 library(arsenal)
+library(AER)
 # Read data
 data <- read.table("./Assignment1/data_assignment1.csv", header = TRUE,
                    sep = ",")
@@ -21,3 +23,7 @@ summary(data_normal_sp1)
 # Opdracht 3
 balancing_table <- tableby(default_option ~ female + age + partner + children + years_education + suminc_before_application, data=data)
 summary(balancing_table, text=TRUE)
+
+# Opdracht 5
+ols_fs <- lm(totweeksbenefits26 ~ searchperiod,data=data)
+summary(ols_fs)
