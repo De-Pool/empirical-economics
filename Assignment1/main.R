@@ -21,9 +21,28 @@ summary(data_normal_sp0)
 summary(data_normal_sp1)
 
 # Opdracht 3
-balancing_table <- tableby(default_option ~ female + age + partner + children + years_education + suminc_before_application, data=data)
-summary(balancing_table, text=TRUE)
+balancing_table <- tableby(default_option ~ female +
+  age +
+  partner +
+  children +
+  years_education +
+  suminc_before_application, data = data)
+summary(balancing_table, text = TRUE)
 
 # Opdracht 5
-ols_fs <- lm(totweeksbenefits26 ~ searchperiod + female + age + partner + children + years_education + suminc_before_application,data=data)
-summary(ols_fs)
+# Y = benefits
+# Zi = default_option (instrumental variable for searchperiod)
+# X = searchperiod (we want to assess what effect having a search period has on Y -> benefits = a + B*searchperiod + u)
+# We use 2SLS to estimate B
+ols_12SLS <- lm(searchperiod ~ default_option, data = data)
+summary(ols_12SLS)
+
+# Opdracht 7
+# 2nd stage
+x_hat <- ols_12SLS$fitted.values
+ols_22SLS <- lm(totweeksbenefits26 ~ x_hat, data = data)
+summary(ols_22SLS)
+
+default_option <- data$default_dummy
+iv_estimation <- ivreg(totweeksbenefits26 ~ searchperiod | default_option, data = data)
+summary(iv_estimation)
