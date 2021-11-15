@@ -12,7 +12,7 @@ summary(data)
 
 # Opdracht 1
 # default_dummy takes on 1 if default_option = normal, else it takes on a value of 0
-data$default_dummy <- ifelse(data$default_option == "normal", 1, 0)
+data$defaultdummy <- ifelse(data$default_option == "normal", 1, 0)
 # sp_never > 0, therefore not all caseworkers complied with the default option
 average_sp_never <- mean(data[data$defaultdummy == 0, "searchperiod"])
 average_sp_normal <- mean(data[data$defaultdummy == 1, "searchperiod"])
@@ -46,6 +46,3 @@ iv_estimation <- ivreg(totweeksbenefits26 ~ searchperiod + female + age + partne
 summary(iv_estimation)
 # iv_estimation <- ivreg(totweeksbenefits26 ~ searchperiod | default_dummy, data = data)
 # summary(iv_estimation)
-
-
-
