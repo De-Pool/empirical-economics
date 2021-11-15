@@ -46,3 +46,11 @@ iv_estimation <- ivreg(totweeksbenefits26 ~ searchperiod + female + age + partne
 summary(iv_estimation)
 # iv_estimation <- ivreg(totweeksbenefits26 ~ searchperiod | default_dummy, data = data)
 # summary(iv_estimation)
+
+# Opdracht 10
+# 4 components, E[Yi|Zi=1], E[Yi|Zi=0], E[Xi|Zi=1], E[Xi|Zi=0]
+E_Yi_Zi_1 <- mean(data[data$defaultdummy == 1, "totweeksbenefits26"])
+E_Yi_Zi_0 <- mean(data[data$defaultdummy == 0, "totweeksbenefits26"])
+E_Xi_Zi_1 <- mean(data[data$defaultdummy == 1, "searchperiod"])
+E_Xi_Zi_0 <- mean(data[data$defaultdummy == 0, "searchperiod"])
+B_wald <- (E_Yi_Zi_1 - E_Yi_Zi_0) / (E_Xi_Zi_1 - E_Xi_Zi_0)
