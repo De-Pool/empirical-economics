@@ -47,6 +47,5 @@ summary(iv_estimation)
 # iv_estimation <- ivreg(totweeksbenefits26 ~ searchperiod | default_dummy, data = data)
 # summary(iv_estimation)
 
-summary(data)
 
 
