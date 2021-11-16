@@ -32,20 +32,16 @@ summary(balancing_table, text = TRUE)
 # Zi = default_option (instrumental variable for searchperiod)
 # X = searchperiod (we want to assess what effect having a search period has on Y -> benefits = a + B1*searchperiod + u)
 # We use 2SLS to estimate B1
-ols_12SLS <- lm(searchperiod ~ default_dummy, data = data)
-summary(ols_12SLS)
+ols_1_2SLS <- lm(searchperiod ~ default_dummy, data = data)
+summary(ols_1_2SLS)
 
 # Opdracht 7
 # 2nd stage using the fitted values for searchperiod from the first stage
-x_hat <- ols_12SLS$fitted.values
-ols_22SLS <- lm(totweeksbenefits26 ~ x_hat, data = data)
-summary(ols_22SLS)
+x_hat <- ols_1_2SLS$fitted.values
+ols_2_2SLS <- lm(totweeksbenefits26 ~ x_hat, data = data)
+summary(ols_2_2SLS)
 
-# Direct IV estimation using 2SLS, with and without control variables
-iv_est_controls <- ivreg(totweeksbenefits26 ~ searchperiod + female + age + partner + children + years_education + suminc_before_application |
-      default_dummy + female + age + partner + children + years_education + suminc_before_application, data = data)
-summary(iv_est_controls)
-
+# Direct IV estimation using 2SLS, without control variables
 iv_est_no_controls <- ivreg(totweeksbenefits26 ~ searchperiod | default_dummy, data = data)
 summary(iv_est_no_controls)
 
@@ -63,4 +59,3 @@ summary(iv_est_week_job)
 
 iv_est_wage <- ivreg(totincome26 ~ searchperiod | default_dummy, data=data)
 summary(iv_est_wage)
-
