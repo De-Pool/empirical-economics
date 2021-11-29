@@ -48,8 +48,19 @@ accident_FE <- plm(I(log(accident)) ~ txmsban, index = c("state", "time"), model
 summary(accident_FE)
 
 ######## Exercise 3 ########
+FE <- plm(log_accident ~ txmsban + log(unemp) + log(permale) + log(rgastax), index = c("state", "time"), model = "within", effect = "individual", data = data)
+summary(FE)
+
 ######## Exercise 4 ########
+FE <- plm(log_accident ~ txmsban + log(unemp) + log(permale) + log(rgastax) + factor(year), index = c("state", "time"), model = "within", effect = "individual", data = data)
+summary(FE)
+
 ######## Exercise 5 ########
+average_accidents <- list()
+for (t in 1:48) {
+  average_accidents <- append(average_accidents, mean(data[data$time == t, "accident"]))
+}
+plot(1:48, average_accidents)
 ######## Exercise 6 ########
 ######## Exercise 7 ########
 ######## Part 2: Difference in Differences ########
