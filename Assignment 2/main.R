@@ -5,6 +5,8 @@ install.packages("knitr")
 install.packages("broom")
 install.packages("dyplr")
 install.packages("ggplot2")
+install.packages("mfx")
+library(mfx)
 library(arsenal)
 library(AER)
 library(plm)
@@ -90,6 +92,7 @@ sp +
 ggplot(data_states, aes(fill = factor(state), y = log_accident_states, x = time)) +
   geom_bar(position = "dodge", stat = "identity") +
   geom_vline(xintercept = 19)
+
 ######## Exercise 10 ########
 treat_state <- ifelse(data$state == 22, 1, 0)
 post <- ifelse(data$txmsban == 0, 0, 1)
@@ -101,14 +104,30 @@ post <- ifelse(data$txmsban == 0, 0, 1)
 ######## Part 3: Binary choice models ########
 ######## Exercise 11 ########
 data_time <- data %>% filter(time == 1)
+log_pop_time <- log(data_time$pop)
+log_accident_time <- log(data_time$accident)
 
-treated_ols <- lm(treated ~ log_pop + log_accident, data)
+treated_ols <- lm(treated ~ log_pop_time + log_accident_time, data_time)
 summary(treated_ols)
 
 ######## Exercise 12 ########
 # Generate the predicted values for the first model and discuss them.
 treated_ols$fitted.values
 # Next, use Probit and Logit to estimate the same model specification as in question (11)
+# Probit model
+probit <- glm(treated ~ log_pop_time + log_accident_time, family = binomial(link = "probit"), data_time)
+summary(probit)
+confint(probit)
+# marginal effect
+probitmfx(treated ~ log_pop_time + log_accident_time, data_time)
+
+#Logit model
+logit <- glm(treated ~ log_pop_time + log_accident_time, family = "binomial", data_time)
+summary(probit)
+confint(probit)
+# marginal effect
+logitmfx(treated ~ log_pop_time + log_accident_time, data_time)
+
 
 ######## Exercise 13 ########
 ######## Exercise 14 ########
