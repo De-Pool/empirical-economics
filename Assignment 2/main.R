@@ -44,7 +44,7 @@ summary(accident_pooled2)
 ######## Exercise 2 ########
 
 #fixed effects model
-accident_FE <- plm(I(log(accident)) ~ txmsban, index = c("state", "time"), model = "within", effect = "time", data = data)
+accident_FE <- plm(I(log(accident)) ~ txmsban, index = c("state", "time"), model = "within", effect = "individual", data = data)
 summary(accident_FE)
 
 ######## Exercise 3 ########
@@ -131,25 +131,25 @@ probit <- glm(treated ~ I(log(pop)) + I(log(accident)), family = binomial(link =
 summary(probit)
 confint(probit)
 # Marginal effect of each coefficient at the mean
-marg_probit <- margins(probit, atmeans=T)
-summary(marg_probit)
+summary(margins(probit, atmeans=T))
+probitmfx(probit, data_time, atmean = T)
 
 # Logit model
-logit <- glm(treated ~ I(log(pop)) + I(log(accident)), family = "binomial", data_time)
+logit <- glm(treated ~ I(log(pop)) + I(log(accident)), family = binomial(link = "logit"), data_time)
 summary(logit)
 confint(logit)
 # Marginal effect of each coefficient at the mean
-marg_logit <- margins(logit, atmeans=T)
-summary(marg_logit)
+summary(margins(logit, atmeans=T))
+logitmfx(logit, data_time, atmean = T)
 
 ######## Exercise 13 ########
-# Marginal effect Probit
+# Calculating average marginal effects of our Probit model (AME) (weet niet precies waarom er een verschil zit in deze twee)
 probitmfx(treated ~ I(log(pop)) + I(log(accident)), data_time)
-margins(probit)
+summary(margins(probit))
 
-# Marginal effect Logit
+# Calculating average marginal effects of our Logit model (AME)
 logitmfx(treated ~ I(log(pop)) + I(log(accident)), data_time)
-margins(logit)
+summary(margins(logit))
 
 ######## Exercise 14 ########
 ######## Exercise 15 ########
