@@ -30,10 +30,10 @@ summary(data)
 
 #pooled model for log(accident)
 accident_pooled1 <- plm(I(log(accident)) ~ txmsban, index = c("state", "time"), model = "pooling", data = data)
+summary(accident_pooled1)
 
 #look at the coefficients of the model
 kable(tidy(accident_pooled1), digits = 3, caption = "Pooled model")
-summary(accident_pooled1)
 
 # What happens to β1 if you estimate the same regression controlling for log population size
 accident_pooled2 <- plm(I(log(accident)) ~ txmsban + I(log(pop)), model = "pooling", data = data)
@@ -48,11 +48,11 @@ accident_FE <- plm(I(log(accident)) ~ txmsban, index = c("state", "time"), model
 summary(accident_FE)
 
 ######## Exercise 3 ########
-FE <- plm(log_accident ~ txmsban + log(unemp) + log(permale) + log(rgastax), index = c("state", "time"), model = "within", effect = "individual", data = data)
+FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax), index = c("state", "time"), model = "within", effect = "individual", data = data)
 summary(FE)
 
 ######## Exercise 4 ########
-FE <- plm(log_accident ~ txmsban + log(unemp) + log(permale) + log(rgastax) + factor(year), index = c("state", "time"), model = "within", effect = "individual", data = data)
+FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax) + as.numeric(time), index = c("state", "time"), model = "within", effect = "individual", data = data)
 summary(FE)
 
 ######## Exercise 5 ########
@@ -60,9 +60,16 @@ average_accidents <- list()
 for (t in 1:48) {
   average_accidents <- append(average_accidents, mean(data[data$time == t, "accident"]))
 }
-plot(1:48, average_accidents)
+plot(1:48, average_accidents, xlab = "time", ylab = "Mean of accidents")
+# we can see a seasonal pattern, therefore a linear time trend is not enough to control for time.
+
 ######## Exercise 6 ########
+FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax) + factor(time), index = c("state", "time"), model = "within", effect = "individual", data = data)
+summary(FE)
+# we try to control for this seasonal pattern by including a dummy variable for each time period.
+
 ######## Exercise 7 ########
+
 ######## Part 2: Difference in Differences ########
 
 #look at the data for states with sort off the same population size
