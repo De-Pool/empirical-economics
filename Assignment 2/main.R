@@ -108,7 +108,7 @@ summary(treated_ols)
 ######## Exercise 12 ########
 # Generate the predicted values for the first model and discuss them.
 treated_ols$fitted.values
-# Next, use Probit and Logit to estimate the same model specification as in question (10)
+# Next, use Probit and Logit to estimate the same model specification as in question (11)
 
 ######## Exercise 13 ########
 ######## Exercise 14 ########
