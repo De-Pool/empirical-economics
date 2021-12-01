@@ -9,6 +9,8 @@ install.packages("mfx")
 install.packages("robustbase")
 install.packages("margins")
 install.packages("sandwich")
+install.packages("kdensity")
+library(kdensity)
 library(sandwich)
 library(robustbase)
 library(mfx)
@@ -65,9 +67,18 @@ for (t in 1:48) {
 plot(1:48, average_accidents, xlab = "time", ylab = "Mean of accidents")
 
 ######## Exercise 6 ########
-# we try to control for this seasonal pattern by including a dummy variable for each time period.
-FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax) + factor(time), index = c("state", "time"), model = "within", effect = "individual", data = data)
+# control for seasonality by adding 4 seasons:
+# summer: 6, 7, 8 -> 0
+# fall: 9, 10, 11 -> 1
+# winter: 12, 1, 2 -> 2
+# spring: 3, 4, 5 -> 3
+data <- data %>%
+  mutate(season = ifelse(time == 1 | time == 2 | time == 12, 0, ifelse(time == 3 | time == 4 | time == 5, 1, ifelse(time == 9 | time == 10 | time == 11, 2, 3))))
+
+FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax) + factor(season),
+           index = c("state", "time"), model = "within", effect = "individual", data = data)
 summary(FE)
+
 
 ######## Exercise 7 ########
 
@@ -154,3 +165,6 @@ logitmfx(logit, data_time, atmean = TRUE)
 summary(margins(probit))
 # Calculating  marginal effects of our Logit model (AME)
 summary(margins(logit))
+
+######## Exercise 14 ########
+plot(kdensity(treated_ols_model$fitted.values))
