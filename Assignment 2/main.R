@@ -8,6 +8,8 @@ install.packages("ggplot2")
 install.packages("mfx")
 install.packages("robustbase")
 install.packages("margins")
+install.packages("sandwich")
+library(sandwich)
 library(robustbase)
 library(mfx)
 library(arsenal)
@@ -27,7 +29,6 @@ summary(data)
 
 ######## Part 1: Panel Data Models ########
 ######## Exercise 1 ########
-
 #pooled model for log(accident)
 accident_pooled1 <- plm(I(log(accident)) ~ txmsban, index = c("state", "time"), model = "pooling", data = data)
 summary(accident_pooled1)
@@ -48,7 +49,7 @@ accident_FE <- plm(I(log(accident)) ~ txmsban, index = c("state", "time"), model
 summary(accident_FE)
 
 ######## Exercise 3 ########
-FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax), index = c("state", "time"), model = "within", effect = "individual", data = data)
+FE <- plm(I(log(accident)) ~ txmsban + I(log(unemp)) + I(log(permale)) + I(log(rgastax)), index = c("state", "time"), model = "within", effect = "individual", data = data)
 summary(FE)
 
 ######## Exercise 4 ########
@@ -56,17 +57,17 @@ FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax) 
 summary(FE)
 
 ######## Exercise 5 ########
+# we can see a seasonal pattern, therefore a linear time trend is not enough to control for time.
 average_accidents <- list()
 for (t in 1:48) {
   average_accidents <- append(average_accidents, mean(data[data$time == t, "accident"]))
 }
 plot(1:48, average_accidents, xlab = "time", ylab = "Mean of accidents")
-# we can see a seasonal pattern, therefore a linear time trend is not enough to control for time.
 
 ######## Exercise 6 ########
+# we try to control for this seasonal pattern by including a dummy variable for each time period.
 FE <- plm(I(log(accident)) ~ txmsban + log(unemp) + log(permale) + log(rgastax) + factor(time), index = c("state", "time"), model = "within", effect = "individual", data = data)
 summary(FE)
-# we try to control for this seasonal pattern by including a dummy variable for each time period.
 
 ######## Exercise 7 ########
 
@@ -121,13 +122,8 @@ post <- ifelse(data$txmsban == 0, 0, 1)
 ######## Exercise 11 ########
 data_time <- data %>% filter(time == 1)
 
-treated_ols <- lm(treated ~ I(log(pop)) + I(log(accident)), data_time)
-summary(treated_ols)
-
-# "Make sure to use the right standard errors" --> robust??
-treated_ols_robust <- lmrob(treated ~ I(log(pop)) + I(log(accident)), data_time)
-summary(treated_ols_robust)
-
+treated_ols_model <- lm(formula = treated ~ I(log(pop)) + I(log(accident)), data = data_time)
+coeftest(treated_ols_model, vcov = vcovHC(treated_ols))
 
 ######## Exercise 12 ########
 # Generate the predicted values for the first model and discuss them.
