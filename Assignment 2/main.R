@@ -118,9 +118,8 @@ ggplot(data_states, aes(fill = factor(state), y = I(log(accident)), x = time)) +
 treat_state <- ifelse(data$state == 22, 1, 0)
 post <- ifelse(data$txmsban == 0, 0, 1)
 
-# treat_state <- ifelse(data_states$state == 22, 1, 0)
-# post <- ifelse(data_states$txmsban == 0, 0, 1)
-
+did_model <- lm(I(log(accident)) ~ treat_state + post + treat_state*post, data=data)
+summary(did_model)
 
 ######## Part 3: Binary choice models ########
 ######## Exercise 11 ########
