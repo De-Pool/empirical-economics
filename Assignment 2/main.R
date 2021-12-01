@@ -114,8 +114,8 @@ ggplot(data_states, aes(fill = factor(state), y = I(log(accident)), x = time)) +
 treat_state <- ifelse(data$state == 22, 1, 0)
 post <- ifelse(data$txmsban == 0, 0, 1)
 
-#treat_state <- ifelse(data_states$state == 22, 1, 0)
-#post <- ifelse(data_states$txmsban == 0, 0, 1)
+# treat_state <- ifelse(data_states$state == 22, 1, 0)
+# post <- ifelse(data_states$txmsban == 0, 0, 1)
 
 
 ######## Part 3: Binary choice models ########
@@ -123,36 +123,30 @@ post <- ifelse(data$txmsban == 0, 0, 1)
 data_time <- data %>% filter(time == 1)
 
 treated_ols_model <- lm(formula = treated ~ I(log(pop)) + I(log(accident)), data = data_time)
-coeftest(treated_ols_model, vcov = vcovHC(treated_ols))
+coeftest(treated_ols_model, vcov = vcovHC(treated_ols_model))
 
 ######## Exercise 12 ########
 # Generate the predicted values for the first model and discuss them.
-treated_ols$fitted.values
+treated_ols_model$fitted.values
 # Next, use Probit and Logit to estimate the same model specification as in question (11)
 # Probit model
 probit <- glm(treated ~ I(log(pop)) + I(log(accident)), family = binomial(link = "probit"), data_time)
 summary(probit)
 confint(probit)
+
 # Marginal effect of each coefficient at the mean
-summary(margins(probit, atmeans=T))
-probitmfx(probit, data_time, atmean = T)
+probitmfx(probit, data_time, atmean = TRUE)
 
 # Logit model
 logit <- glm(treated ~ I(log(pop)) + I(log(accident)), family = binomial(link = "logit"), data_time)
 summary(logit)
 confint(logit)
 # Marginal effect of each coefficient at the mean
-summary(margins(logit, atmeans=T))
-logitmfx(logit, data_time, atmean = T)
+logitmfx(logit, data_time, atmean = TRUE)
 
 ######## Exercise 13 ########
-# Calculating average marginal effects of our Probit model (AME) (weet niet precies waarom er een verschil zit in deze twee)
-probitmfx(treated ~ I(log(pop)) + I(log(accident)), data_time)
+# Calculating average marginal effects of our Probit model (AME)
 summary(margins(probit))
-
-# Calculating average marginal effects of our Logit model (AME)
-logitmfx(treated ~ I(log(pop)) + I(log(accident)), data_time)
+# Calculating  marginal effects of our Logit model (AME)
 summary(margins(logit))
 
-######## Exercise 14 ########
-######## Exercise 15 ########
