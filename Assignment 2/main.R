@@ -100,10 +100,14 @@ data %>%
 
 ######## Exercise 9 ########
 # plot
-sp <- ggplot(data = data_states, aes(x = time, y = I(log(accident))))
+sp <- ggplot(data = data_states, aes(x = time, y = I(log(accident)), colour = factor(state)))
 sp +
   geom_vline(xintercept = 19) +
-  geom_point(aes(colour = factor(state)), size = 2)
+  geom_point(size = 2)
+
+sp +
+  geom_vline(xintercept = 19) +
+  stat_summary(geom = 'line')
 
 # bar chart
 ggplot(data_states, aes(fill = factor(state), y = I(log(accident)), x = time)) +
@@ -128,6 +132,7 @@ coeftest(treated_ols_model, vcov = vcovHC(treated_ols_model))
 ######## Exercise 12 ########
 # Generate the predicted values for the first model and discuss them.
 treated_ols_model$fitted.values
+plot(data_time[data_time$state != 2 & data_time$state != 11, "treated"], treated_ols_model$fitted.values, xlab = "treated", ylab = "probability")
 # Next, use Probit and Logit to estimate the same model specification as in question (11)
 # Probit model
 probit <- glm(treated ~ I(log(pop)) + I(log(accident)), family = binomial(link = "probit"), data_time)
